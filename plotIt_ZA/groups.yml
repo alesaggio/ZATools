@@ -8,20 +8,20 @@
   legend-order: 6
   order: 10
   fill-color: '#EB6841'
-'ttV':
-  legend: ' t#bar{t}V'
-  legend-order: 2
-  fill-color: '#53777A'
-'t':
+#'ttV':
+#  legend: ' t#bar{t}V'
+#  legend-order: 2
+#  fill-color: '#53777A'
+'SingleTop':
   legend: 'Single top'
   legend-order: 4
   fill-color: '#C02942'
 'Data':
   legend: 'Data'
-'Higgs':
-  legend: 'SM Higgs'
-  legend-order: 1
-  fill-color: '#A8DBA8'
+#'Higgs':
+#  legend: 'SM Higgs'
+#  legend-order: 1
+#  fill-color: '#A8DBA8'
 'Other':
   legend: 'Other'
   legend-order: 0 
@@ -30,6 +30,10 @@
   fill-color: '#ECD078'
   legend: 'ZZ'
   legend-order: 3
+'ZH':
+  fill-color: '#00A0B0'
+  legend: 'ZH'
+  legend-order: 7
     
 'low_mll':
   legend: 'm_{ll} < 76'

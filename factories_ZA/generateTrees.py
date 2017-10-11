@@ -82,17 +82,17 @@ tree["branches"] = []
 basePlotter = None
 
 if do_lljj:
-    basePlotter = BasePlotter(btag=False)
+    basePlotter = BasePlotter(btag=False, deepCSV=False, cmva=False)
     
     if do_llbb:
-        llbb_temp = BasePlotter(btag=True)
+        llbb_temp = BasePlotter(btag=True, deepCSV=True, cmva=False)
         tree["branches"].append({
             'name': 'is_llbb',
             'variable': llbb_temp.joinCuts(llbb_temp.sanityCheck, llbb_temp.dict_cat_cut[flavour])
             })
 
 else:
-    basePlotter = BasePlotter(btag=True)
+    basePlotter = BasePlotter(btag=True, deepCSV=True, cmva=False)
 
 tree["cut"] = basePlotter.joinCuts(basePlotter.sanityCheck, basePlotter.dict_cat_cut[flavour])
 

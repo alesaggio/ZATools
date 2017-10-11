@@ -133,13 +133,17 @@ for key in keys:
  
         #if "All" in key_name: continue
 
-        if args.lljj and 'btagM' in key_name: continue
-        if args.llbb and 'btagM' not in key_name: continue
+        # if lljj (for background), plot the non-btagged plots
+        if args.lljj and 'btagM_deepCSV' in key_name: continue
+        #if args.lljj and 'btagM_cmva' in key_name: continue
+        # if llbb (for background and signal), plot only the btagged plots
+        if args.llbb and 'btagM_deepCSV' not in key_name: continue
+        #if args.llbb and 'btagM_cmva' not in key_name: continue
 
         #if not "no_cut" in key_name:
         #    continue
 
-        if "nobtag_to_btagM_reweighting" in key_name: continue
+        #if "nobtag_to_btagM_reweighting" in key_name: continue
 
         #if "NN" not in key_name and "jj_M" not in key_name: continue
 
@@ -199,6 +203,12 @@ for key in keys:
         elif "jet2_CMVAv2" in key_name:
             plot['x-axis'] = "Sub-leading jet cMVAv2 discriminant"
             plot.update(defaultStyle_events)
+        elif "jet1_deepCSV" in key_name:
+            plot['x-axis'] = "Leading jet deepCSV discriminant"
+            plot.update(defaultStyle_events)
+        elif "jet2_deepCSV" in key_name:
+            plot['x-axis'] = "Sub-leading jet deepCSV discriminant"
+            plot.update(defaultStyle_events)
         elif "jet1_JP" in key_name:
             plot['x-axis'] = "Leading jet JP discriminant"
             plot.update(defaultStyle_events)
@@ -235,6 +245,24 @@ for key in keys:
         elif "lljj_pt_" in key_name:
             plot['x-axis'] = "p_{T}^{lljj}"
             plot.update(defaultStyle_events_per_gev)
+        elif "CMVAv2_" in key_name:
+            plot['x-axis'] = "CMVAv2"
+            plot.update(defaultStyle_events)
+        elif "deepCSV_" in key_name:
+            plot['x-axis'] = "deepCSV"
+            plot.update(defaultStyle_events)
+        elif "jj_deepCSV_" in key_name:
+            plot['x-axis'] = "deepCSV of dijet"
+            plot.update(defaultStyle_events)
+        elif "jj_cmva_" in key_name:
+            plot['x-axis'] = "CMVAv2 of dijet"
+            plot.update(defaultStyle_events)
+        elif "deepCSV_M" in key_name:
+            plot['x-axis'] = "Medium deepCSV"
+            plot.update(defaultStyle_events)
+        elif "cmva_M" in key_name:
+            plot['x-axis'] = "Medium CMVAv2"
+            plot.update(defaultStyle_events)
         elif "DPhi_ll_met_" in key_name:
             plot['x-axis'] = "#Delta#phi(ll, #slash{E}_{T})"
             plot.update(defaultStyle_events)
@@ -322,7 +350,7 @@ for key in keys:
             
             #### Do the yields here
             btag_stage = ""
-            if "btagM" in key_name:
+            if "btagM_deepCSV" in key_name:
                 btag_stage = "llbb"
             else:
                 btag_stage = "lljj"

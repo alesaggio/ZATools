@@ -46,16 +46,23 @@ def default_library_directories():
 
 
 class BasePlotter:
-    def __init__(self, btag, objects="nominal"):
+    def __init__(self, btag, deepCSV, cmva, objects="nominal"):
         # systematic should be jecup, jecdown, jerup or jerdown. The one for lepton, btag, etc, have to be treated with the "weight" parameter in generatePlots.py (so far)
 
         self.baseObjectName = "hZA_lljj"
         self.baseObject = self.baseObjectName + "[0]"
         # For backwards compatibility with other tools:
-        #CHANGE THE FOLLOWING LINE ACCORDINGLY!!
-        #self.suffix = self.baseObjectName + "_hZAleptons_" + ("btagM_cmva" if btag else "nobtag_cmva")
-        self.suffix = self.baseObjectName + "" + ("_btagM_cmva" if btag else "_nobtag_cmva")
+        if btag and cmva:
+            #self.suffix = self.baseObjectName + "" + ("_btagM_cmva" if btag else "_nobtag")
+            self.suffix = self.baseObjectName + "" + ("_btagM_cmva")
+        elif btag and deepCSV:
+            #self.suffix = self.baseObjectName + "" + ("_btagM_deepCSV" if btag else "_nobtag")
+            self.suffix = self.baseObjectName + "" + ("_btagM_deepCSV")
+        elif not btag:
+            self.suffix = self.baseObjectName + "" + ("_nobtag")
         self.btag = btag
+        self.deepCSV = deepCSV
+        self.cmva = cmva
         self.prefix = "hZA_"
         
         self.lep1_str = "hZA_leptons[%s.ilep1]" % self.baseObject
@@ -93,7 +100,10 @@ class BasePlotter:
         # Ensure we have one candidate, works also for jecup etc
         self.sanityCheck = "Length$({}) > 0".format(self.baseObjectName)
         if self.btag:
-            self.sanityCheck += " && {}.btag_MM".format(self.baseObject)
+            if deepCSV:
+                self.sanityCheck += " && {}.btag_deepCSV_MM".format(self.baseObject)
+            elif cmva:
+                self.sanityCheck += " && {}.btag_cMVAv2_MM".format(self.baseObject)
 
         # Categories (lepton flavours)
         self.dict_cat_cut =  {
@@ -122,7 +132,7 @@ class BasePlotter:
         ###########
 
         # Lepton ID and Iso Scale Factors
-        electron_id_branch = "electron_sf_id_mediumplushltsafe_hh"
+        electron_id_branch = "electron_sf_hww_mva90_wp"
         electron_reco_branch = "electron_sf_reco_moriond17"
         muon_tracking_branch = "muon_sf_tracking"
         muon_id_branch = "muon_sf_id_tight"
@@ -201,9 +211,15 @@ class BasePlotter:
                 jjBtag_heavy_sfIdx = "[1]"
                 jjBtag_heavy_strCommon="DOWN"
 
-            jjBtag_heavyjet_sf = "(common::combineScaleFactors<2>({{ {{ {{ jet{0}_sf_cmvav2_heavyjet_{1}[{2}][0] , jet{0}_sf_cmvav2_heavyjet_{1}[{2}]{3} }}, {{ jet{0}_sf_cmvav2_heavyjet_{1}[{4}][0], jet{0}_sf_cmvav2_heavyjet_{1}[{4}]{3} }} }} }}, common::Variation::{5}) )".format(self.sys_fwk, "medium", self.jet1_fwkIdx, jjBtag_heavy_sfIdx, self.jet2_fwkIdx, jjBtag_heavy_strCommon)
+            if self.cmva:
+                jjBtag_heavyjet_sf = "(common::combineScaleFactors<2>({{ {{ {{ jet{0}_sf_cmvav2_heavyjet_{1}[{2}][0] , jet{0}_sf_cmvav2_heavyjet_{1}[{2}]{3} }}, {{ jet{0}_sf_cmvav2_heavyjet_{1}[{4}][0], jet{0}_sf_cmvav2_heavyjet_{1}[{4}]{3} }} }} }}, common::Variation::{5}) )".format(self.sys_fwk, "medium", self.jet1_fwkIdx, jjBtag_heavy_sfIdx, self.jet2_fwkIdx, jjBtag_heavy_strCommon)
 
-            jjBtag_lightjet_sf = "(common::combineScaleFactors<2>({{ {{ {{ jet{0}_sf_cmvav2_lightjet_{1}[{2}][0] , jet{0}_sf_cmvav2_lightjet_{1}[{2}]{3} }},{{ jet{0}_sf_cmvav2_lightjet_{1}[{4}][0], jet{0}_sf_cmvav2_lightjet_{1}[{4}]{3} }} }} }}, common::Variation::{5}) )".format(self.sys_fwk, "medium", self.jet1_fwkIdx, jjBtag_light_sfIdx, self.jet2_fwkIdx, jjBtag_light_strCommon)
+                jjBtag_lightjet_sf = "(common::combineScaleFactors<2>({{ {{ {{ jet{0}_sf_cmvav2_lightjet_{1}[{2}][0] , jet{0}_sf_cmvav2_lightjet_{1}[{2}]{3} }},{{ jet{0}_sf_cmvav2_lightjet_{1}[{4}][0], jet{0}_sf_cmvav2_lightjet_{1}[{4}]{3} }} }} }}, common::Variation::{5}) )".format(self.sys_fwk, "medium", self.jet1_fwkIdx, jjBtag_light_sfIdx, self.jet2_fwkIdx, jjBtag_light_strCommon)
+            
+            elif self.deepCSV:
+                #Use SFs=1 for deepCSV, to be included yet
+                jjBtag_heavyjet_sf = "1."
+                jjBtag_lightjet_sf = "1."
 
         else:
             jjBtag_heavyjet_sf = "1."
@@ -353,7 +369,7 @@ class BasePlotter:
                         'plot_cut': self.totalCut,
                         'binning': '(50, -4, 4)'
                 },
-				{
+                {
                         'name': 'lep1_phi_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
                         'variable': self.lep1_str+".p4.Phi()",
                         'plot_cut': self.totalCut,
@@ -431,18 +447,18 @@ class BasePlotter:
                         'plot_cut': self.totalCut,
                         'binning': '(50, 0, 450)'
                 },
-				{
-				        'name': 'll_DPhi_l_l_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
-						'variable': "abs("+self.baseObject+".DPhi_l_l)",
-						'plot_cut': self.totalCut,
-						'binning': '(50, 0, 3.1416)'
-				},
-				{
-				        'name': 'jj_DPhi_j_j_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
-						'variable': "abs("+self.baseObject+".DPhi_j_j)",
-						'plot_cut': self.totalCut,
-						'binning': '(50, 0, 3.1416)'
-				},
+                {
+                        'name': 'll_DPhi_l_l_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': "abs("+self.baseObject+".DPhi_l_l)",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, 0, 3.1416)'
+                },
+                {
+                        'name': 'jj_DPhi_j_j_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': "abs("+self.baseObject+".DPhi_j_j)",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, 0, 3.1416)'
+                },
                 {
                         'name': 'met_pt_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
                         'variable': self.met_str + ".Pt()",
@@ -454,6 +470,66 @@ class BasePlotter:
                         'variable': self.met_str + ".E()",
                         'plot_cut': self.totalCut,
                         'binning': '(50, 0, 500)'
+                },
+                {
+                        'name': 'jet1_cMVAv2_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': self.jet1_str+".CMVAv2",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, -1, 1)'
+                },
+                {
+                        'name': 'jet2_cMVAv2_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': self.jet2_str+".CMVAv2",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, -1, 1)'
+                },
+                {
+                        'name': 'jet1_deepCSV_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': self.jet1_str+".deepCSV",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, -1, 1)'
+                },
+                {
+                        'name': 'jet2_deepCSV_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': self.jet2_str+".deepCSV",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, -1, 1)'
+                },
+                {
+                        'name': 'jj_deepCSV_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': self.baseObject+".sumDeepCSV",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, -2, 2)'
+                },
+                {
+                        'name': 'jj_cmva_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': self.baseObject+".sumCMVAv2",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, -2, 2)'
+                },
+                {
+                        'name': 'jet1_deepCSV_M_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': self.jet1_str+".btag_deepCSV_M",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, -1, 1)'
+                },
+                {
+                        'name': 'jet1_cmva_M_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': self.jet1_str+".btag_cMVAv2_M",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, -1, 1)'
+                },
+                {
+                        'name': 'jj_deepCSV_MM_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': self.baseObject+".btag_deepCSV_MM",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, -1, 1)'
+                },
+                {
+                        'name': 'jj_cmva_MM_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': self.baseObject+".btag_cMVAv2_MM",
+                        'plot_cut': self.totalCut,
+                        'binning': '(50, -1, 1)'
                 }
             ])
             
@@ -472,6 +548,7 @@ class BasePlotter:
                 }
             ])
             
+            '''
             self.cmva_plot.extend([
                 {
                         'name': 'jet1_cMVAv2_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
@@ -486,7 +563,7 @@ class BasePlotter:
                         'binning': '(50, -1, 1)'
                 }
             ])
-            
+            '''
 
 
             

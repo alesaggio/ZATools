@@ -17,7 +17,7 @@ sys.path.append('/nfs/soft/python/python-2.7.5-sl6_amd64_gcc44/lib/python2.7/sit
 CMSSW_BASE = os.environ['CMSSW_BASE']
 SCRAM_ARCH = os.environ['SCRAM_ARCH']
 sys.path.append(os.path.join(CMSSW_BASE, 'bin', SCRAM_ARCH))
-from SAMADhi import Dataset, Sample, DbStore
+from cp3_llbb.SAMADhi.SAMADhi import Dataset, Sample, DbStore
 
 import inspect
 scriptDir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -130,10 +130,11 @@ class Configuration:
 # General plots
 MainPlots_ForMC = Configuration('generatePlots.py', suffix='_for_MCbkg', mode='plots', samples=[
 #            "DY_LO"
-#            "Main_Training",
             "DY_NLO",
-			"TTBar",
-			"ZZ"
+            "TTBar",
+            "ZZ",
+            "ZH",
+            "SingleTop"
 #            "Higgs",
 #            "VV_VVV",
 #            "Top_Other",
