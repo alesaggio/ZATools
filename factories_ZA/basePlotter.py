@@ -103,7 +103,9 @@ class BasePlotter:
             if deepCSV:
                 self.sanityCheck += " && {}.btag_deepCSV_MM".format(self.baseObject)
             elif cmva:
-                self.sanityCheck += " && {}.btag_cMVAv2_MM".format(self.baseObject)
+                # Set the medium cut by hand, do it correctly when re-running the NTuples
+                #self.sanityCheck += " && {}.btag_cMVAv2_MM".format(self.baseObject)
+                self.sanityCheck += " && {}.CMVAv2 > 0.4432 && {}.CMVAv2 > 0.4432".format(self.jet1_str, self.jet2_str)
 
         # Categories (lepton flavours)
         self.dict_cat_cut =  {

@@ -221,7 +221,7 @@ for systematicType in systematics.keys():
 
         ###### llbb ######
         
-        basePlotter_llbb = BasePlotter(btag=True, deepCSV=True, cmva=False, objects=objects)
+        basePlotter_llbb = BasePlotter(btag=True, deepCSV=False, cmva=True, objects=objects)
         
         if allowed_systematics_llbb(systematic):
             this_categories = llbb_categories[:]

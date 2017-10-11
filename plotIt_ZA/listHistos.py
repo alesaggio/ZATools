@@ -134,11 +134,11 @@ for key in keys:
         #if "All" in key_name: continue
 
         # if lljj (for background), plot the non-btagged plots
-        if args.lljj and 'btagM_deepCSV' in key_name: continue
-        #if args.lljj and 'btagM_cmva' in key_name: continue
+        #if args.lljj and 'btagM_deepCSV' in key_name: continue
+        if args.lljj and 'btagM_cmva' in key_name: continue
         # if llbb (for background and signal), plot only the btagged plots
-        if args.llbb and 'btagM_deepCSV' not in key_name: continue
-        #if args.llbb and 'btagM_cmva' not in key_name: continue
+        #if args.llbb and 'btagM_deepCSV' not in key_name: continue
+        if args.llbb and 'btagM_cmva' not in key_name: continue
 
         #if not "no_cut" in key_name:
         #    continue
