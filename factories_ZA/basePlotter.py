@@ -102,7 +102,7 @@ class BasePlotter:
             #"MuEl": "(({0}.isElMu || {0}.isMuEl) && (runOnMC || ((hZA_muel_fire_trigger_cut || hZA_elmu_fire_trigger_cut) && runOnElMu)) && {1}.M() > 12)".format(self.baseObject, self.ll_str)
                         }
         self.dict_cat_cut["SF"] = "(" + self.dict_cat_cut["ElEl"] + "||" + self.dict_cat_cut["MuMu"] + ")"
-
+        #self.dict_cat_cut["All"] = "(" + self.dict_cat_cut["ElEl"] + "||" + self.dict_cat_cut["MuMu"] + "||" + self.dict_cat_cut["MuEl"] + ")"
 
     def generatePlots(self, categories, requested_plots, weights, systematic="nominal", extraString="", prependCuts=[], appendCuts=[], allowWeightedData=False, resonant_signal_grid=[], nonresonant_signal_grid=[], skimSignal2D=False): 
 
@@ -115,7 +115,9 @@ class BasePlotter:
         
         electron_1_id_cut = '({0}.isEl ? ( {0}.ele_hlt_id && !(std::abs({0}.p4.Eta()) > 1.444 && std::abs({0}.p4.Eta()) < 1.566) ) : 1)'.format(self.lep1_str)
         electron_2_id_cut = '({0}.isEl ? ( {0}.ele_hlt_id && !(std::abs({0}.p4.Eta()) > 1.444 && std::abs({0}.p4.Eta()) < 1.566) ) : 1)'.format(self.lep2_str)
-        cuts = self.joinCuts(cuts, electron_1_id_cut, electron_2_id_cut)
+
+        mll_cut = "({0}.M() > 70) && {0}.M() < 110".format(self.ll_str, self.ll_str)
+        cuts = self.joinCuts(cuts, mll_cut, electron_1_id_cut, electron_2_id_cut)
 
         ###########
         # Weights #
@@ -279,7 +281,7 @@ class BasePlotter:
                         'name': 'jj_M_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
                         'variable': self.jj_str + ".M()",
                         'plot_cut': self.totalCut,
-                        'binning': '(50, 10, 410)'
+                        'binning': '(40, 10, 1000)'
                 })
             
             # Plot to compute yields (ensure we have not over/under flow)
@@ -305,6 +307,12 @@ class BasePlotter:
             
             # BASIC PLOTS
             self.basic_plot.extend([
+                {
+                        'name': 'Mjj_vs_Mlljj_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                        'variable': self.jj_str + '.M() ::: '+self.baseObject + '.p4.M()',
+                        'plot_cut': self.totalCut,
+                        'binning': '(60, 0, 1500, 60, 0, 1500)'
+                },
                 {
                         'name': 'lep1_pt_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
                         'variable': self.lep1_str+".p4.Pt()",
