@@ -311,7 +311,7 @@ for key in keys:
                 plot['blinded-range'] = [150, 500]
 
         elif "lljj_M_" in key_name:
-            plot['x-axis'] = "m_{lljj}"
+            plot['x-axis'] = "m_{lljj} (GeV)"
             plot.update(defaultStyle_events_per_gev)
             if should_be_blind(key_name):
                 plot['blinded-range'] = [500, 1500]

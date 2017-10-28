@@ -1,6 +1,6 @@
 'DY':
   legend: 'Drell-Yan'
-  legend-order: 5
+  legend-order: 7
   order: 5
   fill-color: '#00A0B0'
 'tt':
@@ -14,7 +14,7 @@
   fill-color: '#53777A'
 't':
   legend: 'Single top'
-  legend-order: 4
+  legend-order: 3
   fill-color: '#C02942'
 'Data':
   legend: 'Data'
@@ -29,7 +29,11 @@
 'ZZ':
   fill-color: '#ECD078'
   legend: 'ZZ'
-  legend-order: 3
+  legend-order: 5
+'ZH':
+  fill-color: '#ECD078'
+  legend: 'ZH'
+  legend-order: 4
     
 'low_mll':
   legend: 'm_{ll} < 76'

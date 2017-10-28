@@ -1,6 +1,8 @@
 import copy, sys, os
 import numpy as np
-
+import json
+#sys.path.insert(0, '/home/ucl/cp3/asaggio/scratch/CMSSW_8_0_30/src/cp3_llbb/ZATools/scripts_ZA/')
+#import cutWindow
 
 def get_scram_tool_info(tool, tag):
     import subprocess
@@ -10,7 +12,9 @@ def get_scram_tool_info(tool, tag):
     return subprocess.check_output(cmd).strip()
 
 def default_code_before_loop():
-    return ""
+    return r"""
+    massWindow window("/home/ucl/cp3/asaggio/scratch/CMSSW_8_0_30/src/cp3_llbb/ZATools/scripts_ZA/ellipseParam.json");
+    """
 
 def default_code_in_loop():
     return ""
@@ -21,6 +25,7 @@ def default_code_after_loop():
 def default_headers():
     return [
             "utils.h",
+            "massWindow.h",
             ]
 
 def default_include_directories(scriptDir):
@@ -32,6 +37,7 @@ def default_include_directories(scriptDir):
 def default_sources(scriptDir):
     files = [
             "utils.cc",
+            "massWindow.cc",
             ]
     files = [ os.path.join(scriptDir, "..", "common", "src", f) for f in files ]
     return files
@@ -68,6 +74,9 @@ class BasePlotter:
         self.jet_coll_str = "hZA_jets"
         self.lepton_coll_str = "hZA_leptons"
         self.sys_fwk = ""
+        self.filename = "/home/ucl/cp3/asaggio/scratch/CMSSW_8_0_30/src/cp3_llbb/ZATools/scripts_ZA/ellipseParam.json"
+        self.plotInEllipse = True
+        self.plotOutOfEllipse = True
 
         #if objects != "nominal":
         #    self.baseObjectName = self.baseObjectName.replace("hZA_", "hZA_" + objects + "_")
@@ -104,6 +113,7 @@ class BasePlotter:
         self.dict_cat_cut["SF"] = "(" + self.dict_cat_cut["ElEl"] + "||" + self.dict_cat_cut["MuMu"] + ")"
 
 
+
     def generatePlots(self, categories, requested_plots, weights, systematic="nominal", extraString="", prependCuts=[], appendCuts=[], allowWeightedData=False, resonant_signal_grid=[], nonresonant_signal_grid=[], skimSignal2D=False): 
 
         # Protect against the fact that data do not have jecup collections, in the nominal case we still have to check that data have one candidate 
@@ -112,10 +122,11 @@ class BasePlotter:
             sanityCheck = self.joinCuts("!event_is_data", self.sanityCheck)
 
         cuts = self.joinCuts(*(prependCuts + [sanityCheck]))
-        
+
         electron_1_id_cut = '({0}.isEl ? ( {0}.ele_hlt_id && !(std::abs({0}.p4.Eta()) > 1.444 && std::abs({0}.p4.Eta()) < 1.566) ) : 1)'.format(self.lep1_str)
         electron_2_id_cut = '({0}.isEl ? ( {0}.ele_hlt_id && !(std::abs({0}.p4.Eta()) > 1.444 && std::abs({0}.p4.Eta()) < 1.566) ) : 1)'.format(self.lep2_str)
         cuts = self.joinCuts(cuts, electron_1_id_cut, electron_2_id_cut)
+
 
         ###########
         # Weights #
@@ -264,6 +275,8 @@ class BasePlotter:
         self.other_plot = []
         self.vertex_plot = []
         self.genht_plot = []
+        self.inEllipse_plot = []
+        self.outOfEllipse_plot = []
 
         self.forSkimmer_plot = []
 
@@ -302,7 +315,8 @@ class BasePlotter:
                     return "{jets}[{idx}].gen_{flav}".format(jets=self.jet_coll_str, idx=jet_idx, flav=flav)
             
             mll_plot_binning = '(75, 12, 252)'
-            
+
+
             # BASIC PLOTS
             self.basic_plot.extend([
                 {
@@ -488,7 +502,88 @@ class BasePlotter:
             ])
             
 
+            #PLOTS IN ELLIPSE
+            if self.plotInEllipse:
+                with open(self.filename) as f:
+                    parameters = json.load(f)
+                for j, line in enumerate(parameters):
+                    #discard points with MH > 1000 GeV, if any
+                    if line[6] > 1000:
+                        continue
+                    inWindowCut = "window.isInWindow({0}, {1}, 2., {2}, {3})".format(float(line[0]), float(line[1]), self.jj_str + ".M()", self.baseObject+".p4.M()")
+                    self.ellCut = self.joinCuts(self.totalCut, inWindowCut)
+                    self.extraString = "inEllipse_{0}_{1}_{2}".format(j, round(line[0], 1), round(line[1], 1))
+                    self.inEllipse_plot.extend([
+                        {
+                            'name': 'll_M_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                            'variable': self.ll_str+".M()",
+                            'plot_cut': self.ellCut,
+                            'binning': mll_plot_binning
+                        },
+                        {
+                            'name': 'Mjj_vs_Mlljj_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                            'variable': self.jj_str + '.M() ::: '+self.baseObject + '.p4.M()',
+                            'plot_cut': self.ellCut,
+                            'binning': '(60, 0, 1500, 60, 0, 1500)'
+                        },
+                        {
+                            'name': 'jj_M_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                            'variable': self.jj_str + ".M()",
+                            'plot_cut': self.ellCut,
+                            'binning': '(40, 10, 1000)'
+                        },
+                        {
+                            'name': 'lljj_M_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                            'variable': self.baseObject+".p4.M()",
+                            'plot_cut': self.ellCut,
+                            'binning': '(50, 100, 1500)'
+                        },
+                        {
+                            'name': 'isInOrOut_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                            'variable': "window.isInWindow({0}, {1}, 2., {2}, {3})".format(line[0], line[1], self.jj_str + ".M()", self.baseObject+".p4.M()"),
+                            'plot_cut': self.totalCut,
+                            'binning': '(2, 0, 2)'
+                        }
+                    ])
 
+            
+            #PLOTS OUT OF ELLIPSE
+            if self.plotOutOfEllipse:
+                with open(self.filename) as f:
+                    parameters = json.load(f)
+                for j, line in enumerate(parameters):
+                    #discard points with MH > 1000 GeV
+                    if line[6] > 1000:
+                        continue
+                    notInWindowCut = "window.isNoise({0}, {1}, 2., {2}, {3})".format(line[0], line[1], self.jj_str + ".M()", self.baseObject+".p4.M()")
+                    self.outOfEllCut = self.joinCuts(self.totalCut, notInWindowCut)
+                    self.extraString = "outOfEllipse_{0}_{1}_{2}".format(j, round(line[0], 1), round(line[1], 1))
+                    self.outOfEllipse_plot.extend([
+                        {
+                            'name': 'll_M_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                            'variable': self.ll_str+".M()",
+                            'plot_cut': self.outOfEllCut,
+                            'binning': mll_plot_binning
+                        },
+                        {
+                            'name': 'Mjj_vs_Mlljj_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                            'variable': self.jj_str + '.M() ::: '+self.baseObject + '.p4.M()',
+                            'plot_cut': self.outOfEllCut,
+                            'binning': '(60, 0, 1500, 60, 0, 1500)'
+                        },
+                        {
+                            'name': 'jj_M_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                            'variable': self.jj_str + ".M()",
+                            'plot_cut': self.outOfEllCut,
+                            'binning': '(40, 10, 1000)'
+                        },
+                        {
+                            'name': 'lljj_M_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
+                            'variable': self.baseObject+".p4.M()",
+                            'plot_cut': self.outOfEllCut,
+                            'binning': '(50, 100, 1500)'
+                        }
+                    ])
             
             # gen level plots for jj 
             #for elt in self.plots_jj:
@@ -497,6 +592,7 @@ class BasePlotter:
             #        tempPlot["variable"] = tempPlot["variable"].replace(self.jj_str,"hZA_gen_BB")
             #        tempPlot["name"] = "gen"+tempPlot["name"]
             #        self.plots_gen.append(tempPlot)
+            
             self.gen_plot.extend([
                 {
                     'name': 'gen_mZA',

@@ -66,6 +66,10 @@ if "basic" in branch_families:
     plots_for_branches += ["mjj", "basic", "nn_inputs", "other", "forSkimmer", "cmva", "evt"]
 if "gen" in branch_families:
     plots_for_branches += ["gen"]
+if "inEllipse" in branch_families:
+    plots_for_branches += ["inEllipse"]
+if "outOfEllipse" in branch_families:
+    plots_for_branches += ["outOfEllipse"]
 if "flavour" in branch_families:
     plots_for_branches += ["detailed_flavour"]
 if "weights" in branch_families:

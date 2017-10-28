@@ -84,6 +84,10 @@ if "other" in lljj_plot_families:
     plots_lljj += ["other"]
 if "btag_efficiencies" in lljj_plot_families:
     plots_lljj += ["btag_efficiency_2d"]
+if "inEllipse" in lljj_plot_families:
+    plots_lljj += ["inEllipse"]
+if "outOfEllipse" in lljj_plot_families:
+    plots_lljj += ["outOfEllipse"]
 if "weights" in lljj_plot_families:
     plots_lljj += ["llidisoWeight", "trigeffWeight", "puWeight"]
 
@@ -95,6 +99,10 @@ if "basic" in llbb_plot_families:
     plots_llbb += ["mjj", "basic"]
 if "other" in llbb_plot_families:
     plots_llbb += ["other"]
+if "inEllipse" in llbb_plot_families:
+    plots_llbb += ["inEllipse"]
+if "outOfEllipse" in llbb_plot_families:
+    plots_llbb += ["outOfEllipse"]
 if "weights" in llbb_plot_families:
     plots_llbb += ["llidisoWeight", "trigeffWeight", "puWeight", "jjbtagWeight"]
 

@@ -140,20 +140,26 @@ MainPlots_ForMC = Configuration('generatePlots.py', suffix='_for_MCbkg', mode='p
 #            "WJets",
         ], generation_args={
             'sample_type': 'MC',
-            'lljj_plots': ['basic'],
-            'llbb_plots': ['basic'],
+            #'lljj_plots': ['basic'],
+            #'llbb_plots': ['basic'],
+            'lljj_plots': ['basic', 'inEllipse', 'outOfEllipse'],
+            'llbb_plots': ['basic', 'inEllipse', 'outOfEllipse'],
             'syst': False
         })
 MainPlots_ForData = Configuration('generatePlots.py', suffix='_for_data', mode='plots', samples=['Data'], generation_args={
             'sample_type': 'Data',
-            'lljj_plots': ['basic'],
-            'llbb_plots': ['basic'],
+            #'lljj_plots': ['basic'],
+            #'llbb_plots': ['basic'],
+            'lljj_plots': ['basic', 'inEllipse', 'outOfEllipse'],
+            'llbb_plots': ['basic', 'inEllipse', 'outOfEllipse'],
             'syst': False
         })
 MainPlots_ForSignal = Configuration('generatePlots.py', suffix='_for_signal', mode='plots', samples=['Signal'], generation_args={
             'sample_type': 'Signal',
-            'lljj_plots': ['basic'],
-            'llbb_plots': ['basic'],
+            #'lljj_plots': ['basic'],
+            #'llbb_plots': ['basic'],
+            'lljj_plots': ['basic', 'inEllipse', 'outOfEllipse'],
+            'llbb_plots': ['basic', 'inEllipse', 'outOfEllipse'],
             'syst': False
         })
 
