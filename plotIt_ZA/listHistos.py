@@ -139,10 +139,6 @@ for key in keys:
         #if not "no_cut" in key_name:
         #    continue
 
-        if "nobtag_to_btagM_reweighting" in key_name: continue
-
-        #if "NN" not in key_name and "jj_M" not in key_name: continue
-
         ## Update all the plots with title, ...
 
         alreadyIn.append(key_name)

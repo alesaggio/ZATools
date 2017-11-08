@@ -132,8 +132,8 @@ MainPlots_ForMC = Configuration('generatePlots.py', suffix='_for_MCbkg', mode='p
 #            "DY_LO"
 #            "Main_Training",
             "DY_NLO",
-			"TTBar",
-			"ZZ"
+            "TTBar",
+            "ZZ"
 #            "Higgs",
 #            "VV_VVV",
 #            "Top_Other",

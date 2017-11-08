@@ -48,8 +48,8 @@ check_overlap([for_data, for_MC, for_signal])
 
 use_syst = get_cfg('syst')
 
-lljj_categories = get_cfg('lljj_categories', ['MuMu', 'ElEl'])
-llbb_categories = get_cfg('llbb_categories', ['MuMu', 'ElEl'])
+lljj_categories = get_cfg('lljj_categories', ['MuMu', 'ElEl', 'MuEl'])
+llbb_categories = get_cfg('llbb_categories', ['MuMu', 'ElEl', 'MuEl'])
 lljj_stages = get_cfg('lljj_stages', [])
 llbb_stages = get_cfg('llbb_stages', [])
 lljj_plot_families = get_cfg('lljj_plots', [])

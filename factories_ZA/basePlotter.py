@@ -99,10 +99,10 @@ class BasePlotter:
         self.dict_cat_cut =  {
             "ElEl": "({0}.isElEl && (runOnMC || (hZA_elel_fire_trigger_cut && runOnElEl)) && {1}.M() > 12)".format(self.baseObject, self.ll_str),
             "MuMu": "({0}.isMuMu && (runOnMC || (hZA_mumu_fire_trigger_cut && runOnMuMu)) && {1}.M() > 12)".format(self.baseObject, self.ll_str),
-            #"MuEl": "(({0}.isElMu || {0}.isMuEl) && (runOnMC || ((hZA_muel_fire_trigger_cut || hZA_elmu_fire_trigger_cut) && runOnElMu)) && {1}.M() > 12)".format(self.baseObject, self.ll_str)
+            "MuEl": "(({0}.isElMu || {0}.isMuEl) && (runOnMC || ((hZA_muel_fire_trigger_cut || hZA_elmu_fire_trigger_cut) && runOnElMu)) && {1}.M() > 12)".format(self.baseObject, self.ll_str)
                         }
         self.dict_cat_cut["SF"] = "(" + self.dict_cat_cut["ElEl"] + "||" + self.dict_cat_cut["MuMu"] + ")"
-        #self.dict_cat_cut["All"] = "(" + self.dict_cat_cut["ElEl"] + "||" + self.dict_cat_cut["MuMu"] + "||" + self.dict_cat_cut["MuEl"] + ")"
+        self.dict_cat_cut["All"] = "(" + self.dict_cat_cut["ElEl"] + "||" + self.dict_cat_cut["MuMu"] + "||" + self.dict_cat_cut["MuEl"] + ")"
 
     def generatePlots(self, categories, requested_plots, weights, systematic="nominal", extraString="", prependCuts=[], appendCuts=[], allowWeightedData=False, resonant_signal_grid=[], nonresonant_signal_grid=[], skimSignal2D=False): 
 
@@ -257,7 +257,6 @@ class BasePlotter:
         self.basic_plot = []
         self.csv_plot = []
         self.cmva_plot = []
-        self.isElEl_plot = []
         self.mjj_plot = []
  
         self.gen_plot = []
@@ -283,15 +282,6 @@ class BasePlotter:
                         'plot_cut': self.totalCut,
                         'binning': '(40, 10, 1000)'
                 })
-            
-            # Plot to compute yields (ensure we have not over/under flow)
-            #self.isElEl_plot.append({
-            #            'name': 'isElEl_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraString, self.systematicString),
-            #            'variable': "%s.isElEl"%self.baseObject,
-            #            'plot_cut': self.totalCut,
-            #            'binning': '(2, 0, 2)'
-            #    })
-            
             
             def get_jet_flavour_cut(flav, jet_idx):
                 if flav == "g":
