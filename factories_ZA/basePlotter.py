@@ -659,7 +659,7 @@ class BasePlotter:
                             'name': 'rho_steps_histo_%s_%s_%s%s'%(self.llFlav, self.suffix, self.extraStringForInOut, self.systematicString),
                             'variable': "window_{0}.isInEllipse_noSize({1}, {2}, {3}, {4})".format((cat if cat!='MuEl' else 'ElEl'), line[0], line[1], self.jj_str + ".M()", self.baseObject + ".p4.M()"),
                             'plot_cut': self.totalCut,
-                            'binning': '(7, 0, 3.5)'
+                            'binning': '(7, 0, 3)'
                         }
                 ])
                 '''
