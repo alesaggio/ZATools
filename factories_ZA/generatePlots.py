@@ -175,11 +175,12 @@ else:
                 "trigeffup", "trigeffdown",
                 "pdfup", "pdfdown",
                 #"dyStatup", "dyStatdown"  this comes from DY data-driven
-                #"elrecoup", "elrecodown",
-                #"mutrackingup", "mutrackingdown",
+                "elrecoup", "elrecodown",
+                "mutrackingup", "mutrackingdown"
                 #"hdampup", "hdampdown",
-                ]
+                ],
             }
+
     # Scale uncertainties
     for i in range(6):
         systematics["SF"].append("scaleUncorr{}".format(i))

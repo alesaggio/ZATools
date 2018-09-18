@@ -344,7 +344,7 @@ for key in keys:
             plot['x-axis'] = "#rho"
             plot.update(defaultStyle_noOverflow)
             if should_be_blind(key_name):
-                plot['blinded-range'] = [0, 0.99]
+                plot['blinded-range'] = [0, 3]
 
 
         elif "lljj_M_" in key_name:

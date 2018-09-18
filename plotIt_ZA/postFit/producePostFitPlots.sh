@@ -19,13 +19,13 @@ get_legend_2d() {
 
 signals="MH-800_MA-200 MH-1000_MA-200 MH-800_MA-50 MH-500_MA-400 MH-800_MA-100 MH-650_MA-50 MH-250_MA-50 MH-1000_MA-50 MH-500_MA-50 MH-800_MA-400 MH-500_MA-300 MH-300_MA-100 MH-500_MA-200 MH-250_MA-100 MH-1000_MA-500 MH-300_MA-50 MH-800_MA-700 MH-200_MA-100 MH-200_MA-50 MH-300_MA-200 MH-500_MA-100"
 
-flavors="MuMu ElEl"
+flavors="MuMu ElEl MuEl"
 
 for flavor in $flavors; do
   for signal in $signals; do
 
-    root="postFitShapes/${signal}_noMuEl/$flavor"
-    output="postFitPlots/$signal/$flavor"
+    root="postFitShapes/${signal}/$flavor"
+    output="postFitPlots/${signal}/$flavor"
     
     input="${root}"
 
@@ -40,12 +40,12 @@ for flavor in $flavors; do
 
     # Replace signal and legend
     sed "s/#SIGNAL#/${signal}/g" postfitPlots.yml.tpl > postfitPlots.yml
-    #sed -i "s/#LEGEND_NN#/\"${legend}\"/g" postfitPlots.yml
-    #sed -i "s/#LEGEND_2D#/\"${legend_2d}\"/g" postfitPlots.yml
     if [ $flavor = "MuMu" ]; then
       sed -i "s/#CHANNEL#/#mu#mu channel/" postfitPlots.yml
-    else
+    elif [ $flavor = "ElEl" ]; then
       sed -i "s/#CHANNEL#/ee channel/" postfitPlots.yml
+    else
+      sed -i "s/#CHANNEL#/#mue channel/" postfitPlots.yml
     fi
 
     cp postfitPlots.yml postfitPlots_${signal}_${flavor}.yml
