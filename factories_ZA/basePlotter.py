@@ -304,6 +304,9 @@ class BasePlotter:
             jjBtag_heavyjet_sf = "1."
             jjBtag_lightjet_sf = "1."
 
+        # ZPt reweighting (only for DY)
+        ptll_NLO = "{0}.ptllDYW_NLO".format(self.baseObject)
+
         # PU WEIGHT
         puWeight = "event_pu_weight"
         if systematic == "puup":
@@ -773,7 +776,7 @@ class BasePlotter:
                         # Be careful to use 1 for data when applying DY reweighting
                         plot["weight"] = "event_weight" + " * (runOnMC ? " + scaleWeight + " : 1. )"
                         for weight in weights:
-                            plot["weight"] += " * " + available_weights[weight]
+                            plot["weight"] += " * " + available_weights[weight] + " * " + ptll_NLO
                     else:
                         print "No other weight than event_weight for ", plotFamily 
                     plotsToReturn.append(plot)
@@ -787,7 +790,7 @@ class BasePlotter:
                         # The normalisation is never applied on data, so we're safe even when applying DY reweighting
                         plot["normalize-to"] = normalization
                         for weight in weights:
-                            plot["weight"] += " * " + available_weights[weight]
+                            plot["weight"] += " * " + available_weights[weight] + " * " + ptll_NLO
                     else:
                         print "No other weight than event_weight for ", plotFamily 
                     plotsToReturn.append(plot)
@@ -800,7 +803,7 @@ class BasePlotter:
                         # The normalisation is never applied on data, so we're safe even when applying DY reweighting
                         plot["normalize-to"] = normalization
                         for weight in weights:
-                            plot["weight"] += " * " + available_weights[weight]
+                            plot["weight"] += " * " + available_weights[weight] + " * " + ptll_NLO
                     else:
                         # Divide by sample_weight since we cannot avoid it in histFactory
                         plot["weight"] = "event_weight/__sample_weight"

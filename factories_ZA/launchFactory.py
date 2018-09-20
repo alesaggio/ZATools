@@ -130,20 +130,20 @@ class Configuration:
 # General plots
 MainPlots_ForMC = Configuration('generatePlots.py', suffix='_for_MCbkg', mode='plots', samples=[
             "DY_NLO",
-            "TTBar",
-            "ZZ",
-            "ZH",
-            "SingleTop",
-            "VV",
-            "WJets",
-            "TTV",
-            "TTH",
-            "WGamma"
+            #"TTBar",
+            #"ZZ",
+            #"ZH",
+            #"SingleTop",
+            #"VV",
+            #"WJets",
+            #"TTV",
+            #"TTH",
+            #"WGamma"
             #"QCD"
         ], generation_args={
             'sample_type': 'MC',
-            'lljj_plots': ['inOut'],
-            'llbb_plots': ['inOut'],
+            'lljj_plots': ['basic', 'inOut'],
+            'llbb_plots': ['basic', 'inOut'],
             'syst': True,
             'syst_split_jec': True,
             'lljj_stages': ['mll_and_met_cut'],
@@ -209,8 +209,8 @@ parser.add_argument('--skip', help='Skip the building part.', action="store_true
 args = parser.parse_args()
 
 configurations.append(MainPlots_ForMC)
-configurations.append(MainPlots_ForData)
-configurations.append(MainPlots_ForSignal)
+#configurations.append(MainPlots_ForData)
+#configurations.append(MainPlots_ForSignal)
 
 for c in configurations:
     c.get_sample_ids()

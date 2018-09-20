@@ -167,9 +167,9 @@ for key in keys:
                 }
         plot['labels'] = []
 
-        if not args.ell_index is None:
-            if "rho_steps" not in key_name:
-                continue
+        #if not args.ell_index is None:
+        #    if "rho_steps" not in key_name:
+        #        continue
 
         if "lep1_pt" in key_name:
             plot['x-axis'] = "Leading lepton p_{T} (GeV)"
